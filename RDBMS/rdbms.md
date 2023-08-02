@@ -120,7 +120,7 @@ Examples:
 6. Data Migration: Moving data from one database to another or upgrading to a new database can be a complex and time-consuming process.
 7. Flexibility: The structure of a database is often rigid and inflexible, making it difficult to adapt to changing requirements or to accommodate new types of data.
 
-## Data integrity
+### Data integrity
 
 - Data integrity in databases refers to the accuracy, completeness, and consistency
 of the data stored in a database.
@@ -145,7 +145,7 @@ from errors, corruption, or unauthorized changes.
 3. Normalization
     - A design technique that minimizes data redundancy and ensures data consistency by organizing data into separate tables.
 
-## Constraints in MySQL
+### Constraints in MySQL
 
 - Constraints in databases are rules or conditions that must be met for data to be
 inserted, updated, or deleted in a database table.
@@ -177,7 +177,7 @@ retrieve, and delete data in a database.
 many applications, websites, and businesses. In simple terms, SQL is used to
 communicate with and control databases.
 
-## Types of SQL commands
+### Types of SQL commands
 
 1. DDL | Data Definition Language
     1. CREATE
@@ -251,8 +251,6 @@ TRUNCATE TABLE employees
 -- 3. DROP TABLE
 DROP TABLE employees
 ```
-
-### ALTER TABLE command
 
 - The "ALTER TABLE" statement in SQL is used to modify the structure of an existing table.
 - Some of the things that can be done using the ALTER TABLE statement include
