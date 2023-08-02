@@ -119,3 +119,196 @@ Examples:
 5. Security: Securing a database from unauthorized access and protecting sensitive information can be difficult, especially with the increasing threat of cyber attacks.
 6. Data Migration: Moving data from one database to another or upgrading to a new database can be a complex and time-consuming process.
 7. Flexibility: The structure of a database is often rigid and inflexible, making it difficult to adapt to changing requirements or to accommodate new types of data.
+
+## Data integrity
+
+- Data integrity in databases refers to the accuracy, completeness, and consistency
+of the data stored in a database.
+- It is a measure of the reliability and
+trustworthiness of the data and ensures that the data in a database is protected
+from errors, corruption, or unauthorized changes.
+- There are various methods used to ensure data integrity, including:
+
+1. Constraints
+
+    - Constraints in databases are rules or conditions that must be met for data to be
+    inserted, updated, or deleted in a database table.
+    - They are used to enforce the
+    integrity of the data stored in a database and to prevent data from becoming
+    inconsistent or corrupted.
+
+2. Transactions
+
+    - A sequence of database operations that are treated as a single unit
+    of work.
+
+3. Normalization
+    - A design technique that minimizes data redundancy and ensures data consistency by organizing data into separate tables.
+
+## Constraints in MySQL
+
+- Constraints in databases are rules or conditions that must be met for data to be
+inserted, updated, or deleted in a database table.
+- They are used to enforce the
+integrity of the data stored in a database and to prevent data from becoming inconsistent or corrupted.
+
+1. NOT NULL
+2. UNIQUE
+3. PRIMARY KEY
+4. AUTO INCREMENT
+5. CHECK
+6. DEFAULT
+7. FOREIGN KEY
+
+Referential Actions :
+
+1. RESTRICT
+2. CASCADE
+3. SET NULL
+4. SET DEFAULT
+
+## SQL
+
+- SQL (Structured Query Language) is a programming language used for managing
+and manipulating data in relational databases.
+- It allows you to insert, update,
+retrieve, and delete data in a database.
+- It is widely used for data management in
+many applications, websites, and businesses. In simple terms, SQL is used to
+communicate with and control databases.
+
+## Types of SQL commands
+
+1. DDL | Data Definition Language
+    1. CREATE
+    2. ALTER
+    3. DROP
+    4. TRUNCATE
+    5. RENAME
+2. DML | Data Manipulation Language
+    1. INSERT
+    2. UPDATE
+    3. DELETE
+3. DQL | Data Query Language
+    1. SELECT
+4. DCL | Data Control Language
+    1. GRANT
+    2. REVOKE
+5. TCL | Transaction Control Language
+    1. COMMIT
+    2. ROLLBACK
+    3. SAVEPOINT
+
+## DDL
+
+### DDL commands for Databases
+
+1. CREATE
+2. DROP
+
+```mysql
+-- 1. CREATE DATABASE
+CREATE DATABASE IF NOT EXISTS db;
+
+-- 2. DROP DATABASE
+DROP DATABASE IF EXISTS db;
+```
+
+### DDL commands for Tables
+
+1. CREATE
+2. TRUNCATE
+3. DROP
+4. ALTER
+5. RENAME
+
+```mysql
+-- 1. CREATE TABLE
+CREATE TABLE employees (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  email VARCHAR(50) UNIQUE,
+  hire_date DATE DEFAULT '2022-01-01',
+  salary DECIMAL(10,2) CHECK (salary >= 0),
+  department_id INT,
+  CONSTRAINT name_email_unique UNIQUE (name, email),
+  FOREIGN KEY (department_id) REFERENCES department(id),
+  ON DELETE SET NULL
+  ON UPDATE CASCADE
+);
+
+INSERT INTO employees (id, name, email, hire_date, salary, department_id)
+VALUES 
+  (1, 'John Doe', 'jdoe@example.com', '2022-01-01', 50000, 1),
+  (2, 'Jane Smith', 'jsmith@example.com', '2022-02-15', 60000, 2),
+  (3, 'Bob Johnson', 'bjohnson@example.com', '2022-03-01', 55000, 1),
+  (4, 'Sarah Williams', 'swilliams@example.com', '2022-04-01', 65000, 2),
+  (5, 'Mike Davis', 'mdavis@example.com', '2022-05-15', 70000, 1);
+
+-- 2. TRUNCATE TABLE
+TRUNCATE TABLE employees
+
+-- 3. DROP TABLE
+DROP TABLE employees
+```
+
+### ALTER TABLE command
+
+- The "ALTER TABLE" statement in SQL is used to modify the structure of an existing table.
+- Some of the things that can be done using the ALTER TABLE statement include
+
+1. Add columns
+2. Delete columns
+3. Modify columns
+4. Add Constraints
+5. Delete Constraints
+
+```mysql
+-- 4. ALTER TABLE 
+
+-- Add two new column to an existing table:
+ALTER TABLE table_name
+ADD column_name data_type AFTER|BEFORE other_column_name,
+ADD column_name data_type AFTER|BEFORE other_column_name;
+
+-- Drop an existing column from a table:
+ALTER TABLE table_name
+DROP column_name;
+
+-- Rename an existing column in a table:
+ALTER TABLE table_name
+CHANGE old_column_name new_column_name data_type;
+
+-- Modify a datatype on column in a table:
+ALTER TABLE table_name
+MODIFY COLUMN column_name new_data_type;
+
+-- Add Constraint
+ALTER TABLE table_name
+ADD CONSTRAINT name_of_constraint CHECK (column_name > 18)
+
+-- Delete Constraint
+ALTER TABLE table_name
+DROP CONSTRAINT name_of_constraint
+
+-- Add a primary key to a table:
+ALTER TABLE table_name
+ADD PRIMARY KEY (column_name);
+
+-- Add a foreign key to a table:
+ALTER TABLE table_name
+ADD FOREIGN KEY (column_name)
+REFERENCES referenced_table_name(referenced_column_name);
+
+-- Drop a primary key or foreign key constraint from a table:
+ALTER TABLE table_name
+DROP PRIMARY KEY;
+
+ALTER TABLE table_name
+DROP FOREIGN KEY foreign_key_name;
+```
+
+```mysql
+-- 5. RENAME TABLE
+RENAME TABLE old_name To new_name;
+```
