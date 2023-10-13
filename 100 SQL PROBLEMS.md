@@ -5,7 +5,8 @@
     ```SQL
     SELECT Title, Rating FROM imdb
     NATURAL JOIN earning
-    WHERE SUBSTRING(Title, LOCATE('(', Title) + 1, 4) = '2012' AND MetaCritic > 60 AND Domestic > 100000000;
+    WHERE SUBSTRING(Title, LOCATE('(', Title) + 1, 4) = '2012'
+    AND MetaCritic > 60 AND Domestic > 100000000;
     ```
 
 2. Print the genre and the maximum weighted rating among all the movies of that genre released in 2014 per genre.
@@ -55,4 +56,173 @@ Write a SQL solution to output big countries' name, population and area.
     ```SQL
     SELECT name, population, area FROM world
     WHERE area > 3000000 OR population > 25000000
+    ```
+
+6. Insert student details in students table and print all data of table.
+
+    ```SQL
+    INSERT INTO students (id, name, gender)
+    VALUES
+    (3,'Kim','F'),
+    (4,'Molina','F'),
+    (5,'Dev','M');
+
+    SELECT * FROM students;
+    ```
+
+7. Write a SQL query to get the second highest salary from the Employee table.
+
+    |  Id  |  Salary  |
+    | ---  |  ------  |
+    |  1   |   100    |
+    |  2   |   200    |
+    |  3   |   300    |
+
+    For example, given the above Employee table, the query should return 200 as the second highest salary. If there is no second highest salary, then the query should return null.
+
+    | SecondHighestSalary |
+    | ------------------- |
+    |         200         |
+
+    ```SQL
+    SELECT Salary FROM Employee
+    ORDER BY Salary DESC
+    LIMIT 1,1;
+    ```
+
+8. Write an SQL query to find all dates' id with higher temperature compared to its previous dates (yesterday). Return the result table in any order.
+
+    Table: Weather
+
+    |   Column Name   |   Type   |
+    | --------------- | -------- |
+    | id              | int      |
+    | recordDate      | date     |
+    | temperature     | int      |
+
+    id is the primary key for this table.
+
+    This table contains information about the temperature in a certain day.
+
+    The query result format is in the following example:
+
+    Weather:
+
+    |  id  | recordDate | Temperature |
+    | ---  | ---------- | ----------- |
+    |  1   | 2015-01-01 |     10      |
+    |  2   | 2015-01-02 |     25      |
+    |  3   | 2015-01-03 |     20      |
+    |  4   | 2015-01-04 |     30      |
+
+    Result table:
+
+    |  Id  |
+    | ---  |
+    |  2   |
+    |  4   |
+
+    ```SQL
+    SELECT T.id
+    FROM (
+    SELECT *, (Temperature > LAG(Temperature) OVER (ORDER BY RecordDate)) AS isBig
+    FROM weather
+    ) AS T
+    WHERE isBig = TRUE;
+    ```
+
+9. Given three tables: salesperson, company, orders. Output all the names in the table salesperson, who didn’t have sales to company 'RED'.
+
+    Example
+
+    Input
+
+    Table: Salesperson
+
+    | sales_id |  name  | salary | commission_rate | hire_date  |
+    | -------- | ------ | ------ | --------------- | ---------- |
+    |   1      | John   | 100000 | 6               | 4/1/2006   |
+    |   2      | Amy    | 120000 | 5               | 5/1/2010   |
+    |   3      | Mark   | 65000  | 12              | 12/25/2008 |
+    |   4      | Pam    | 25000  | 25              | 1/1/2005   |
+    |   5      | Alex   | 50000  | 10              | 2/3/2007   |
+
+    The table salesperson holds the salesperson information. Every salesperson has a sales_id and a name.
+
+    Table: Company
+
+    | com_id |  name   | city     |
+    | ------ | ------- | -------- |
+    |   1    | RED     | Boston   |
+    |   2    | ORANGE  | New York |
+    |   3    | YELLOW  | Boston   |
+    |   4    | GREEN   | Austin   |
+
+    The table company holds the company information. Every company has a com_id and a name.
+
+    Table: Orders
+
+    | order_id | order_date | com_id | sales_id | amount  |
+    | -------- | ---------- | ------ | -------- | ------- |
+    | 1        | 1/1/2014   | 3      | 4        | 100000  |
+    | 2        | 2/1/2014   | 4      | 5        | 5000    |
+    | 3        | 3/1/2014   | 1      | 1        | 50000   |
+    | 4        | 4/1/2014   | 1      | 4        | 25000   |
+
+    The table orders holds the sales record information, salesperson and customer company are represented by sales_id and com_id.
+
+    Output
+
+    | name |
+    | ---- |
+    | Amy  |
+    | Mark |
+    | Alex |
+
+    ```SQL
+    SELECT SalesPerson.name
+    FROM SalesPerson
+    LEFT JOIN (
+        SELECT DISTINCT Orders.sales_id
+        FROM Company
+        JOIN Orders ON Company.com_id = Orders.com_id
+        WHERE Company.name = 'RED'
+    ) RedSales ON SalesPerson.sales_id = RedSales.sales_id
+    WHERE RedSales.sales_id IS NULL;
+    ```
+
+10. Write a SQL query for a report that provides the pairs (actor_id, director_id) where the actor has co-worked with the director for 3 times.
+
+    | Column Name | Type    |
+    |-------------|---------|
+    | actor_id    | int     |
+    | director_id | int     |
+    | timestamp   | int     |
+
+    Timestamp is the primary key column for this table.
+
+    Example
+
+    ActorDirector table:
+
+    | actor_id | director_id | timestamp |
+    |---------|-------------|-----------|
+    | 1       | 1           | 0         |
+    | 1       | 1           | 1         |
+    | 1       | 1           | 2         |
+    | 1       | 2           | 3         |
+    | 1       | 2           | 4         |
+    | 2       | 1           | 5         |
+    | 2       | 1           | 6         |
+
+    Result table:
+
+    | actor_id | director_id |
+    |---------|-------------|
+    | 1       | 1           |
+
+    ```SQL
+    SELECT actor_id, director_id From actordirector
+    GROUP BY actor_id, director_id
+    HAVING COUNT(*) = 3
     ```
