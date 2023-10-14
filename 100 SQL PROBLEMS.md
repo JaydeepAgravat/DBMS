@@ -226,3 +226,179 @@ Write a SQL solution to output big countries' name, population and area.
     GROUP BY actor_id, director_id
     HAVING COUNT(*) = 3
     ```
+
+11. swap sex
+
+    id is the primary key for this table.
+    The sex column is ENUM value of type ('m', 'f').
+    The table contains information about an employee.
+
+    Table: Salary
+
+    | Column Name | Type     |
+    |------------- |----------|
+    | id          | int      |
+    | name        | varchar  |
+    | sex         | ENUM     |
+    | salary      | int      |
+
+    ```SQL
+    UPDATE salary SET sex = REPLACE ('fm', sex, ''); 
+    ```
+
+12. Write a SQL query to rank scores. If there is a tie between two scores, both should have the same ranking. Note that after a tie, the next ranking number should be the next consecutive integer value. In other words, there should be no "holes" between ranks.
+
+    | Id | Score |
+    |----|-------|
+    | 1  | 3.50  |
+    | 2  | 3.65  |
+    | 3  | 4.00  |
+    | 4  | 3.85  |
+    | 5  | 4.00  |
+    | 6  | 3.65  |
+
+    For example, given the above Scores table, your query should generate the following report (order by highest score):
+
+    | Score | Rank |
+    |-------|------|
+    | 4.00  | 1    |
+    | 4.00  | 1    |
+    | 3.85  | 2    |
+    | 3.65  | 3    |
+    | 3.65  | 3    |
+    | 3.50  | 4    |
+
+    ```SQL
+    SELECT score,
+    DENSE_RANK() OVER(ORDER BY score DESC) AS "RANK"
+    FROM scores ;
+    ```
+
+13. Write an SQL query to find all numbers that appear at least three times consecutively. Return the result table in any order.
+
+    Table: Logs
+
+    | Column Name | Type    |
+    |-------------|---------|
+    | id          | int     |
+    | num         | varchar |
+
+    The query result format is in the following example:
+
+    Table: Logs
+
+    | Id | Num |
+    |----|-----|
+    | 1  | 1   |
+    | 2  | 1   |
+    | 3  | 1   |
+    | 4  | 2   |
+    | 5  | 1   |
+    | 6  | 2   |
+    | 7  | 2   |
+
+    Result table:
+
+    | ConsecutiveNums |
+    |-----------------|
+    | 1               |
+
+    1 is the only number that appears consecutively for at least three times.
+
+    ```SQL
+    SELECT Num AS ConsecutiveNums
+    FROM (
+        SELECT *,
+            LAG(Num) OVER() AS c1,
+            LAG(Num, 2) OVER() AS c2
+        FROM logs
+    ) AS subquery
+    WHERE c1 = c2 AND num = c1;
+    ```
+
+14. Write an SQL query to report the number of calls and the total call duration between each pair of distinct persons (person1, person2) where person1 != person2. Return the result table in any order.
+
+    Table: Calls
+
+    | Column Name | Type    |
+    |-------------|---------|
+    | from_id     | int     |
+    | to_id       | int     |
+    | duration    | int     |
+
+    This table does not have a primary key, it may contain duplicates.
+    This table contains the duration of a phone call between from_id and to_id.
+    from_id != to_id
+
+    The query result format is in the following example:
+
+    Calls table:
+
+    | from_id | to_id | duration |
+    |---------|-------|----------|
+    | 1       | 2     | 59       |
+    | 2       | 1     | 11       |
+    | 1       | 3     | 20       |
+    | 3       | 4     | 100      |
+    | 3       | 4     | 200      |
+    | 3       | 4     | 200      |
+    | 4       | 3     | 499      |
+
+    Result table:
+
+    | person1 | person2 | call_count | total_duration |
+    |---------|---------|------------|----------------|
+    | 1       | 2       | 2          | 70             |
+    | 1       | 3       | 1          | 20             |
+    | 3       | 4       | 4          | 999            |
+
+    Users 1 and 2 had 2 calls and the total duration is 70 (59 + 11).
+    Users 1 and 3 had 1 call and the total duration is 20.
+    Users 3 and 4 had 4 calls and the total duration is 999 (100 + 200 + 200 + 499).
+
+    ```SQL
+    SELECT
+    CASE
+        WHEN from_id <= to_id THEN from_id
+        ELSE to_id
+    END AS person1,
+    CASE
+        WHEN from_id <= to_id THEN to_id
+        ELSE from_id
+    END AS person2,
+    COUNT(*) AS call_count,
+    SUM(duration) AS total_duration
+    FROM
+        calls
+    GROUP BY
+        person1,
+        person2;
+    ```
+
+15. Write a SQL query for a report that provides the following information for each person in the Person table, regardless if there is an address for each of those people: FirstName, LastName, City, State
+
+    Table: Person
+
+    | Column Name | Type    |
+    |-------------|---------|
+    | PersonId    | int     |
+    | FirstName   | varchar |
+    | LastName    | varchar |
+
+    PersonId is the primary key column for this table.
+    Table: Address
+
+    | Column Name | Type    |
+    |-------------|---------|
+    | AddressId   | int     |
+    | PersonId    | int     |
+    | City        | varchar |
+    | State       | varchar |
+
+    AddressId is the primary key column for this table.
+
+    ```SQL
+    SELECT FirstName, LastName, City, State FROM Person
+    LEFT JOIN Address
+    ON Person.PersonId = Address.PersonId
+    ```
