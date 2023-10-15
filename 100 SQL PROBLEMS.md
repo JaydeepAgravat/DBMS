@@ -402,3 +402,33 @@ Write a SQL solution to output big countries' name, population and area.
     LEFT JOIN Address
     ON Person.PersonId = Address.PersonId
     ```
+
+16. D
+
+    ```SQL
+    
+    ```
+
+17. D
+
+    ```SQL
+    
+    ```
+
+18. D
+
+    ```SQL
+    
+    ```
+
+19. D
+
+    ```SQL
+    
+    ```
+
+20. D
+
+    ```SQL
+
+    ```
