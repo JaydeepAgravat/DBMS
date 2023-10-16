@@ -6,7 +6,7 @@
     SELECT Title, Rating FROM imdb
     NATURAL JOIN earning
     WHERE SUBSTRING(Title, LOCATE('(', Title) + 1, 4) = '2012'
-    AND MetaCritic > 60 AND Domestic > 100000000;
+    AND MetaCritic > 60 AND Domestic > 100000000
     ```
 
 2. Print the genre and the maximum weighted rating among all the movies of that genre released in 2014 per genre.
@@ -67,7 +67,7 @@ Write a SQL solution to output big countries' name, population and area.
     (4,'Molina','F'),
     (5,'Dev','M');
 
-    SELECT * FROM students;
+    SELECT * FROM students
     ```
 
 7. Write a SQL query to get the second highest salary from the Employee table.
@@ -87,7 +87,7 @@ Write a SQL solution to output big countries' name, population and area.
     ```SQL
     SELECT Salary FROM Employee
     ORDER BY Salary DESC
-    LIMIT 1,1;
+    LIMIT 1,1
     ```
 
 8. Write an SQL query to find all dates' id with higher temperature compared to its previous dates (yesterday). Return the result table in any order.
@@ -128,7 +128,7 @@ Write a SQL solution to output big countries' name, population and area.
     SELECT *, (Temperature > LAG(Temperature) OVER (ORDER BY RecordDate)) AS isBig
     FROM weather
     ) AS T
-    WHERE isBig = TRUE;
+    WHERE isBig = TRUE
     ```
 
 9. Given three tables: salesperson, company, orders. Output all the names in the table salesperson, who didn’t have sales to company 'RED'.
@@ -188,7 +188,7 @@ Write a SQL solution to output big countries' name, population and area.
         JOIN Orders ON Company.com_id = Orders.com_id
         WHERE Company.name = 'RED'
     ) RedSales ON SalesPerson.sales_id = RedSales.sales_id
-    WHERE RedSales.sales_id IS NULL;
+    WHERE RedSales.sales_id IS NULL
     ```
 
 10. Write a SQL query for a report that provides the pairs (actor_id, director_id) where the actor has co-worked with the director for 3 times.
@@ -243,7 +243,7 @@ Write a SQL solution to output big countries' name, population and area.
     | salary      | int      |
 
     ```SQL
-    UPDATE salary SET sex = REPLACE ('fm', sex, ''); 
+    UPDATE salary SET sex = REPLACE ('fm', sex, '')
     ```
 
 12. Write a SQL query to rank scores. If there is a tie between two scores, both should have the same ranking. Note that after a tie, the next ranking number should be the next consecutive integer value. In other words, there should be no "holes" between ranks.
@@ -271,7 +271,7 @@ Write a SQL solution to output big countries' name, population and area.
     ```SQL
     SELECT score,
     DENSE_RANK() OVER(ORDER BY score DESC) AS "RANK"
-    FROM scores ;
+    FROM scores 
     ```
 
 13. Write an SQL query to find all numbers that appear at least three times consecutively. Return the result table in any order.
@@ -313,7 +313,7 @@ Write a SQL solution to output big countries' name, population and area.
             LAG(Num, 2) OVER() AS c2
         FROM logs
     ) AS subquery
-    WHERE c1 = c2 AND num = c1;
+    WHERE c1 = c2 AND num = c1
     ```
 
 14. Write an SQL query to report the number of calls and the total call duration between each pair of distinct persons (person1, person2) where person1 != person2. Return the result table in any order.
@@ -372,7 +372,7 @@ Write a SQL solution to output big countries' name, population and area.
         calls
     GROUP BY
         person1,
-        person2;
+        person2
     ```
 
 15. Write a SQL query for a report that provides the following information for each person in the Person table, regardless if there is an address for each of those people: FirstName, LastName, City, State
@@ -403,32 +403,552 @@ Write a SQL solution to output big countries' name, population and area.
     ON Person.PersonId = Address.PersonId
     ```
 
-16. D
+16. Table: Warehouse
+
+    | Column Name  | Type    |
+    | ------------- | ------- |
+    | name         | varchar |
+    | product_id   | int     |
+    | units        | int     |
+
+    (name, product_id) is the primary key for this table.
+    Each row of this table contains the information of the products in each warehouse.
+
+    Table: Products
+
+    | Column Name   | Type    |
+    | ------------- | ------- |
+    | product_id    | int     |
+    | product_name  | varchar |
+    | Width         | int     |
+    | Length        | int     |
+    | Height        | int     |
+
+    product_id is the primary key for this table.
+    Each row of this table contains the information about the product dimensions (Width, Lenght and Height) in feets of each product.
+
+    Write an SQL query to report, How much cubic feet of volume does the inventory occupy in each warehouse.
+
+    warehouse_name
+    volume
+    Return the result table in any order.
+
+    The query result format is in the following example.
+
+    Warehouse table:
+
+    | name     | product_id | units |
+    | -------- | ---------- | ----- |
+    | LCHouse1 | 1          | 1     |
+    | LCHouse1 | 2          | 10    |
+    | LCHouse1 | 3          | 5     |
+    | LCHouse2 | 1          | 2     |
+    | LCHouse2 | 2          | 2     |
+    | LCHouse3 | 4          | 1     |
+
+    Products table:
+
+    | product_id | product_name  | Width | Length | Height |
+    | ---------- | ------------- | ----- | ------ | ------ |
+    | 1          | LC-TV         | 5     | 50     | 40     |
+    | 2          | LC-KeyChain   | 5     | 5      | 5      |
+    | 3          | LC-Phone      | 2     | 10     | 10     |
+    | 4          | LC-T-Shirt    | 4     | 10     | 20     |
+
+    Result table:
+
+    | warehouse_name | volume |
+    | --------------- | ------ |
+    | LCHouse1       | 12250  |
+    | LCHouse2       | 20250  |
+    | LCHouse3       | 800    |
+
+    Volume of product_id = 1 (LC-TV), 5x50x40 = 10000
+
+    Volume of product_id = 2 (LC-KeyChain), 5x5x5 = 125
+
+    Volume of product_id = 3 (LC-Phone), 2x10x10 = 200
+
+    Volume of product_id = 4 (LC-T-Shirt), 4x10x20 = 800
+
+    LCHouse1: 1 unit of LC-TV + 10 units of
+    LC-KeyChain + 5 units of LC-Phone.
+
+    Total volume: 1*10000 + 10*125  + 5*200 = 12250 cubic feet
+
+    LCHouse2: 2 units of LC-TV + 2 units of LC-KeyChain.
+
+    Total volume: 2*10000 + 2*125 = 20250 cubic feet
+
+    LCHouse3: 1 unit of LC-T-Shirt.
+
+    Total volume: 1*800 = 800 cubic feet.
 
     ```SQL
-    
+    SELECT warehouse.name AS warehouse_name,SUM(warehouse.units*products.width*products.length*products.height) AS volume
+    FROM warehouse
+    LEFT JOIN products
+    ON warehouse.product_id = products.product_id
+    GROUP BY warehouse.name
     ```
 
-17. D
+17. Write an SQL query to find all the people who viewed more than one article on the same date, sorted in ascending order by their id.
+
+    Table: Views
+
+    | Column Name | Type  |
+    | ----------- | ----- |
+    | article_id  | int   |
+    | author_id   | int   |
+    | viewer_id   | int   |
+    | view_date   | date  |
+
+    There is no primary key for this table, it may have duplicate rows.
+    Each row of this table indicates that some viewer viewed an article (written by some author) on some date.
+    Note that equal author_id and viewer_id indicate the same person.
+
+    The query result format is in the following example:
+
+    Views table:
+
+    | article_id | author_id | viewer_id | view_date  |
+    | ---------- | --------- | --------- | ---------- |
+    | 1          | 3         | 5         | 2019-08-01 |
+    | 3          | 4         | 5         | 2019-08-01 |
+    | 1          | 3         | 6         | 2019-08-02 |
+    | 2          | 7         | 7         | 2019-08-01 |
+    | 2          | 7         | 6         | 2019-08-02 |
+    | 4          | 7         | 1         | 2019-07-22 |
+    | 3          | 4         | 4         | 2019-07-21 |
+    | 3          | 4         | 4         | 2019-07-21 |
+
+    Result table:
+
+    | id |
+    | -- |
+    | 5  |
+    | 6  |
 
     ```SQL
-    
+    SELECT viewer_id AS id FROM Views 
+    GROUP BY viewer_id
+    HAVING count(distinct article_id)>1 
     ```
 
-18. D
+18. Query all columns for all Marvel cities in the CITY table with populations larger than 100000. The CountryCode for Marvel is Marv.
+
+    The CITY table is described as follows:
+
+    | Field        | Type    |
+    | ------------ | ------- |
+    | ID           | Number  |
+    | Name         | Varchar |
+    | CountryCode  | Varchar |
+    | Population   | Number  |
 
     ```SQL
-    
+    SELECT * FROM CITY
+    WHERE population > 100000 AND
+    countrycode = 'Marv'
     ```
 
-19. D
+19. Write an SQL query to report all the sessions that did not get shown any ads.
+
+    Table: Playback
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | session_id  | int  |
+    | customer_id | int  |
+    | start_time  | int  |
+    | end_time    | int  |
+
+    session_id is the primary key for this table.
+    customer_id is the ID of the customer watching this session.
+    The session runs during the inclusive interval between start_time and end_time.
+    It is guaranteed that start_time <= end_time and that two sessions for the same customer do not intersect.
+
+    Table: Ads
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | ad_id       | int  |
+    | customer_id | int  |
+    | timestamp   | int  |
+
+    ad_id is the primary key for this table.
+    customer_id is the ID of the customer viewing this ad.
+    timestamp is the moment of time at which the ad was shown.
+
+    Return the result table in any order.
+
+    The query result format is in the following example:
+
+    Playback table:
+
+    | session_id | customer_id | start_time | end_time |
+    | ---------- | ----------- | ---------- | -------- |
+    | 1          | 1           | 1          | 5        |
+    | 2          | 1           | 15         | 23       |
+    | 3          | 2           | 10         | 12       |
+    | 4          | 2           | 17         | 28       |
+    | 5          | 2           | 2          | 8        |
+
+    Ads table:
+
+    | ad_id | customer_id | timestamp |
+    | ----- | ----------- | --------- |
+    | 1     | 1           | 5         |
+    | 2     | 2           | 17        |
+    | 3     | 2           | 20        |
+
+    Result table:
+
+    | session_id |
+    | ---------- |
+    | 2          |
+    | 3          |
+    | 5          |
+
+    The ad with ID 1 was shown to user 1 at time 5 while they were in session 1.
+
+    The ad with ID 2 was shown to user 2 at time 17 while they were in session 4.
+
+    The ad with ID 3 was shown to user 2 at time 20 while they were in session 4.
+
+    We can see that sessions 1 and 4 had at least one ad. Sessions 2, 3, and 5 did not have any ads, so we return them.
 
     ```SQL
-    
+    SELECT DISTINCT session_id FROM playback 
+    NATURAL JOIN ads
+    WHERE timestamp < start_time
+    OR timestamp > end_time
+    ORDER BY session_id
     ```
 
-20. D
+20. Write an SQL query to find the ids of products that are both low fat and recyclable.
+
+    Table: Products
+
+    | Column Name | Type  |
+    | ----------- | ----- |
+    | product_id  | int   |
+    | low_fats    | enum  |
+    | recyclable  | enum  |
+
+    product_id is the primary key for this table.
+
+    low_fats is an ENUM of type ('Y', 'N') where 'Y' means this product is low fat and 'N' means it is not.
+
+    recyclable is an ENUM of types ('Y', 'N') where 'Y' means this product is recyclable and 'N' means it is not.
+
+    Return the result table in any order.
+
+    The query result format is in the following example:
+
+    Products table:
+
+    | product_id  | low_fats | recyclable |
+    | ----------- | -------- | ---------- |
+    | 0           | Y        | N          |
+    | 1           | Y        | Y          |
+    | 2           | N        | Y          |
+    | 3           | Y        | Y          |
+    | 4           | N        | N          |
+
+    Result table:
+
+    | product_id  |
+    | ----------- |
+    | 1           |
+    | 3           |
+
+    Only products 1 and 3 are both low fat and recyclable.
 
     ```SQL
+    SELECT product_id FROM products
+    WHERE low_fats='Y' and recyclable='Y'
+    ```
 
+21. Write a SQL query to find all duplicate emails in a table named Person.
+
+    | Id | Email   |
+    | -- | ------- |
+    | 1  | ab.com |
+    | 2  | cd.com |
+    | 3  | ab.com |
+
+    For example, your query should return the following for the above table:
+
+    | Email   |
+    | ------- |
+    | ab.com |
+
+    ```SQL
+    SELECT Email FROM Person
+    GROUP BY Email
+    HAVING COUNT(*)>1
+    ```
+
+22. Write an SQL query to find the customer_number for the customer who has placed the largest number of orders.
+
+    Table: Orders
+
+    | Column Name     | Type |
+    | --------------- | ---- |
+    | order_number    | int  |
+    | customer_number | int  |
+
+    order_number is the primary key for this table.
+    This table contains information about the order ID and the customer ID.
+
+    It is guaranteed that exactly one customer will have placed more orders than any other customer.
+
+    The query result format is in the following example:
+
+    Orders table:
+
+    | order_number | customer_number |
+    | ------------ | ---------------- |
+    | 1            | 1                |
+    | 2            | 2                |
+    | 3            | 3                |
+    | 4            | 3                |
+
+    Result table:
+
+    | customer_number |
+    | ---------------- |
+    | 3               |
+
+    The customer with number 3 has two orders, which is greater than either customer 1 or 2 because each of them only has one order.
+    So the result is customer_number 3.
+
+    ```SQL
+    SELECT customer_number FROM Orders
+    GROUP BY customer_number
+    ORDER BY COUNT(*) DESC
+    LIMIT 1
+    ```
+
+23. A pupil Tim gets homework to identify whether three line segments could possibly form a triangle.
+
+    However, this assignment is very heavy because there are hundreds of records to calculate.
+
+    Could you help Tim by writing a query to judge whether these three  sides can form a triangle, assuming table triangle holds the length of the three sides x, y and z.
+
+    |  x  |  y  |  z  |
+    |----|----|----|
+    | 13 | 15 | 30 |
+    | 10 | 20 | 15 |
+
+    For the sample data above, your query should return the follow result:
+
+    |  x  |  y  |  z  | triangle |
+    |----|----|----|----------|
+    | 13 | 15 | 30 | No       |
+    | 10 | 20 | 15 | Yes      |
+
+    ```SQL
+    SELECT x, y, z,
+    CASE
+        WHEN x + y > z AND x + z > y AND y + z > x THEN 'Yes'
+        ELSE 'No'
+    END AS triangle
+    FROM triangle
+    ```
+
+24. Write an SQL query to find the most frequently ordered product(s) for each customer.
+
+    Table: Customers
+
+    | Column Name   | Type    |
+    | ------------- | ------- |
+    | customer_id   | int     |
+    | name          | varchar |
+
+    customer_id is the primary key for this table.
+    This table contains information about the customers.
+
+    Table: Orders
+
+    | Column Name   | Type  |
+    | ------------- | ----- |
+    | order_id      | int   |
+    | order_date    | date  |
+    | customer_id   | int   |
+    | product_id    | int   |
+
+    order_id is the primary key for this table.
+    This table contains information about the orders made by customer_id.
+    No customer will order the same product more than once in a single day.
+
+    Table: Products
+
+    | Column Name   | Type    |
+    | ------------- | ------- |
+    | product_id    | int     |
+    | product_name  | varchar |
+    | price         | int     |
+
+    product_id is the primary key for this table.
+    This table contains information about the products.
+
+    The result table should have the product_id and product_name for each customer_id who ordered at least one order. Return the result table in any order.
+
+    The query result format is in the following example:
+
+    Customers
+
+    | customer_id | name  |
+    | ----------- | ----- |
+    | 1           | Alice |
+    | 2           | Bob   |
+    | 3           | Tom   |
+    | 4           | Jerry |
+    | 5           | John  |
+
+    Orders
+
+    | order_id | order_date | customer_id | product_id |
+    | -------- | ---------- | ----------- | ---------- |
+    | 1        | 2020-07-31 | 1           | 1          |
+    | 2        | 2020-07-30 | 2           | 2          |
+    | 3        | 2020-08-29 | 3           | 3          |
+    | 4        | 2020-07-29 | 4           | 1          |
+    | 5        | 2020-06-10 | 1           | 2          |
+    | 6        | 2020-08-01 | 2           | 1          |
+    | 7        | 2020-08-01 | 3           | 3          |
+    | 8        | 2020-08-03 | 1           | 2          |
+    | 9        | 2020-08-07 | 2           | 3          |
+    | 10       | 2020-07-15 | 1           | 2          |
+
+    Products
+
+    | product_id | product_name | price |
+    | ---------- | ------------ | ----- |
+    | 1          | keyboard     | 120   |
+    | 2          | mouse        | 80    |
+    | 3          | screen       | 600   |
+    | 4          | hard disk    | 450   |
+
+    Result table:
+
+    | customer_id | product_id | product_name |
+    | ----------- | ---------- | ------------ |
+    | 1           | 2          | mouse        |
+    | 2           | 1          | keyboard     |
+    | 2           | 2          | mouse        |
+    | 2           | 3          | screen       |
+    | 3           | 3          | screen       |
+    | 4           | 1          | keyboard     |
+
+    Alice (customer 1) ordered the mouse three times and the keyboard one time, so the mouse is the most frquently ordered product for them.
+
+    Bob (customer 2) ordered the keyboard, the mouse, and the screen one time, so those are the most frquently ordered products for them.
+
+    Tom (customer 3) only ordered the screen (two times), so that is the most frquently ordered product for them.
+
+    Jerry (customer 4) only ordered the keyboard (one time), so that is the most frquently ordered product for them.
+
+    John (customer 5) did not order anything, so we do not include them in the result table.
+
+    ```SQL
+    WITH ProductCounts AS (
+    SELECT
+        o.customer_id,
+        o.product_id,
+        p.product_name,
+        COUNT(*) AS order_count
+    FROM Orders o
+    JOIN Products p ON o.product_id = p.product_id
+    GROUP BY o.customer_id, o.product_id, p.product_name
+    )
+
+    SELECT customer_id, product_id, product_name
+    FROM (
+    SELECT
+        customer_id,
+        product_id,
+        product_name,
+        RANK() OVER (PARTITION BY customer_id ORDER BY order_count DESC) AS rnk
+    FROM ProductCounts
+    ) AS ranked
+    WHERE rnk = 1
+    ORDER BY customer_id, product_id
+    ```
+
+25. Write an SQL query to find the npv of all each query of queries table.
+
+    Table: NPV
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | id          | int  |
+    | year        | int  |
+    | npv         | int  |
+
+    (id, year) is the primary key of this table.
+    The table has information about the id and the year of each inventory and the corresponding net present value.
+
+    Table: Queries
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | id          | int  |
+    | year        | int  |
+
+    (id, year) is the primary key of this table.
+    The table has information about the id and the year of each inventory query.
+
+    Return the result table in any order.
+
+    The query result format is in the following example:
+
+    NPV table:
+
+    | id   | year | npv |
+    | ---- | ---- | --- |
+    | 1    | 2018 | 100 |
+    | 7    | 2020 | 30  |
+    | 13   | 2019 | 40  |
+    | 1    | 2019 | 113 |
+    | 2    | 2008 | 121 |
+    | 3    | 2009 | 12  |
+    | 11   | 2020 | 99  |
+    | 7    | 2019 | 0   |
+
+    Queries table:
+
+    | id   | year |
+    | ---- | ---- |
+    | 1    | 2019 |
+    | 2    | 2008 |
+    | 3    | 2009 |
+    | 7    | 2018 |
+    | 7    | 2019 |
+    | 7    | 2020 |
+    | 13   | 2019 |
+
+    Result table:
+
+    | id   | year | npv |
+    | ---- | ---- | --- |
+    | 1    | 2019 | 113 |
+    | 2    | 2008 | 121 |
+    | 3    | 2009 | 12  |
+    | 7    | 2018 | 0   |
+    | 7    | 2019 | 0   |
+    | 7    | 2020 | 30  |
+    | 13   | 2019 | 40  |
+
+    The npv value of (7, 2018) is not present in the NPV table, we consider it 0.
+
+    The npv values of all other queries can be found in the NPV table.
+
+    ```SQL
+    SELECT queries.id, queries.year,
+    COALESCE(npv.npv, 0) AS npv
+    FROM queries
+    LEFT JOIN npv ON queries.id = npv.id AND queries.year = npv.year
     ```
