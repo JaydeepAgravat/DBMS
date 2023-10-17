@@ -952,3 +952,290 @@ Write a SQL solution to output big countries' name, population and area.
     FROM queries
     LEFT JOIN npv ON queries.id = npv.id AND queries.year = npv.year
     ```
+
+26. Write an SQL query to find the order_id of all imbalanced orders.
+
+    Table: OrdersDetails
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | order_id    | int  |
+    | product_id  | int  |
+    | quantity    | int  |
+
+    (order_id, product_id) is the primary key for this table.
+    A single order is represented as multiple rows, one row for each product in the order.
+    Each row of this table contains the quantity ordered of the product product_id in the order order_id.
+
+    You are running an ecommerce site that is looking for imbalanced orders. An imbalanced order is one whose maximum quantity is strictly greater than the average quantity of every order (including itself).
+
+    The average quantity of an order is calculated as (total quantity of all products in the order) / (number of different products in the order). The maximum quantity of an order is the highest quantity of any single product in the order.
+
+    Return the result table in any order.
+
+    The query result format is in the following example:
+
+    OrdersDetails table:
+
+    | order_id | product_id | quantity |
+    | -------- | ---------- | -------- |
+    | 1        | 1          | 12       |
+    | 1        | 2          | 10       |
+    | 1        | 3          | 15       |
+    | 2        | 1          | 8        |
+    | 2        | 4          | 4        |
+    | 2        | 5          | 6        |
+    | 3        | 3          | 5        |
+    | 3        | 4          | 18       |
+    | 4        | 5          | 2        |
+    | 4        | 6          | 8        |
+    | 5        | 7          | 9        |
+    | 5        | 8          | 9        |
+    | 3        | 9          | 20       |
+    | 2        | 9          | 4        |
+
+    Result table:
+
+    | order_id |
+    | -------- |
+    | 1        |
+    | 3        |
+
+    The average quantity of each order is:
+
+    - order_id=1: (12+10+15)/3 = 12.3333333
+    - order_id=2: (8+4+6+4)/4 = 5.5
+    - order_id=3: (5+18+20)/3 = 14.333333
+    - order_id=4: (2+8)/2 = 5
+    - order_id=5: (9+9)/2 = 9
+
+    The maximum quantity of each order is:
+
+    - order_id=1: max(12, 10, 15) = 15
+    - order_id=2: max(8, 4, 6, 4) = 8
+    - order_id=3: max(5, 18, 20) = 20
+    - order_id=4: max(2, 8) = 8
+    - order_id=5: max(9, 9) = 9
+
+    Orders 1 and 3 are imbalanced because they have a maximum quantity that exceeds the average quantity of every order.
+
+    ```SQL
+    SELECT order_id
+    FROM OrdersDetails
+    GROUP BY order_id
+    HAVING MAX(quantity) > ALL 
+    ( SELECT AVG(quantity) FROM OrdersDetails
+      GROUP BY order_id
+    );
+    ```
+
+27. Write an SQL query that will, for all products, return each product name with total amount due, paid, canceled, and refunded across all invoices.
+
+    Table: Product
+
+    | Column Name | Type    |
+    | ----------- | ------- |
+    | product_id  | int     |
+    | name        | varchar |
+
+    product_id is the primary key for this table.
+    This table contains the ID and the name of the product. The name consists of only lowercase English letters. No two products have the same name.
+
+    Table: Invoice
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | invoice_id  | int  |
+    | product_id  | int  |
+    | rest        | int  |
+    | paid        | int  |
+    | canceled    | int  |
+    | refunded    | int  |
+
+    invoice_id is the primary key for this table and the id of this invoice.
+    product_id is the id of the product for this invoice.
+    rest is the amount left to pay for this invoice.
+    paid is the amount paid for this invoice.
+    canceled is the amount canceled for this invoice.
+    refunded is the amount refunded for this invoice.
+
+    Return the result table ordered by product_name.
+
+    The query result format is in the following example:
+
+    Product table:
+
+    | product_id | name  |
+    | ---------- | ----- |
+    | 0          | ham   |
+    | 1          | bacon |
+
+    Invoice table:
+
+    | invoice_id | product_id | rest | paid | canceled | refunded |
+    | ---------- | ---------- | ---- | ---- | -------- | -------- |
+    | 23         | 0          | 2    | 0    | 5        | 0        |
+    | 12         | 0          | 0    | 4    | 0        | 3        |
+    | 1          | 1          | 1    | 1    | 0        | 1        |
+    | 2          | 1          | 1    | 0    | 1        | 1        |
+    | 3          | 1          | 0    | 1    | 1        | 1        |
+    | 4          | 1          | 1    | 1    | 1        | 0        |
+
+    Result table:
+
+    | name  | rest | paid | canceled | refunded |
+    | ----- | ---- | ---- | -------- | -------- |
+    | bacon | 3    | 3    | 3        | 3        |
+    | ham   | 2    | 4    | 5        | 3        |
+
+    - The amount of money left to pay for bacon is 1 + 1 + 0 + 1 = 3
+    - The amount of money paid for bacon is 1 + 0 + 1 + 1 = 3
+    - The amount of money canceled for bacon is 0 + 1 + 1 + 1 = 3
+    - The amount of money refunded for bacon is 1 + 1 + 1 + 0 = 3
+    - The amount of money left to pay for ham is 2 + 0 = 2
+    - The amount of money paid for ham is 0 + 4 = 4
+    - The amount of money canceled for ham is 5 + 0 = 5
+    - The amount of money refunded for ham is 0 + 3 = 3
+
+    ```SQL
+    SELECT Product.name,
+       SUM(Invoice.rest) AS rest,
+       SUM(Invoice.paid) AS paid,
+       SUM(Invoice.canceled) AS canceled,
+       SUM(Invoice.refunded) AS refunded
+    FROM Product
+    LEFT JOIN Invoice
+    ON Product.product_id = Invoice.product_id
+    GROUP BY Product.product_id, Product.name
+    ORDER BY Product.name
+    ```
+
+28. Write an SQL query to report all the sessions that did not get shown any ads.
+
+    Table: Playback
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | session_id  | int  |
+    | customer_id | int  |
+    | start_time  | int  |
+    | end_time    | int  |
+
+    session_id is the primary key for this table.
+
+    customer_id is the ID of the customer watching this session.
+
+    The session runs during the inclusive interval between start_time and end_time.
+
+    It is guaranteed that start_time &lt;= end_time and that two sessions for the same customer do not intersect.
+
+    Table: Ads
+
+    | Column Name | Type |
+    | ----------- | ---- |
+    | ad_id       | int  |
+    | customer_id | int  |
+    | timestamp   | int  |
+
+    ad_id is the primary key for this table.
+
+    Customer_id is the ID of the customer viewing this ad.
+
+    Timestamp is the moment of time at which the ad was shown.
+
+    Return the result table in any order.
+
+    The query result format is in the following example:
+
+    Playback table:
+
+    | session_id | customer_id | start_time | end_time |
+    | ---------- | ----------- | ---------- | -------- |
+    | 1          | 1           | 1          | 5        |
+    | 2          | 1           | 15         | 23       |
+    | 3          | 2           | 10         | 12       |
+    | 4          | 2           | 17         | 28       |
+    | 5          | 2           | 2          | 8        |
+
+    Ads table:
+
+    | ad_id | customer_id | timestamp |
+    | ----- | ----------- | --------- |
+    | 1     | 1           | 5         |
+    | 2     | 2           | 17        |
+    | 3     | 2           | 20        |
+
+    Result table:
+
+    | session_id |
+    | ---------- |
+    | 2          |
+    | 3          |
+    | 5          |
+
+    The ad with ID 1 was shown to user 1 at time 5 while they were in session 1.
+    The ad with ID 2 was shown to user 2 at time 17 while they were in session 4.
+    The ad with ID 3 was shown to user 2 at time 20 while they were in session 4.
+
+    We can see that sessions 1 and 4 had at least one ad. Sessions 2, 3, and 5 did not have any ads, so we return them.
+
+    ```SQL
+    SELECT DISTINCT session_id FROM playback 
+    NATURAL JOIN ads
+    WHERE timestamp < start_time
+    OR timestamp > end_time
+    ORDER BY session_id
+    ```
+
+29. There is a table courses with columns: student and class
+
+    Please list out all classes which have more than or equal to 5 students.
+
+    For example, the table:
+
+    | student | class    |
+    | ------- | -------- |
+    | A       | Math     |
+    | B       | English  |
+    | C       | Math     |
+    | D       | Biology  |
+    | E       | Math     |
+    | F       | Computer |
+    | G       | Math     |
+    | H       | Math     |
+    | I       | Math     |
+
+    Should output:
+
+    | class |
+    | ----- |
+    | Math  |
+
+    ```SQL
+    SELECT class FROM courses
+    GROUP BY class
+    HAVING count(*)>=5
+    ```
+
+30. Table point holds the x coordinate of some points on x-axis in a plane, which are all integers.
+
+    Write a query to find the shortest distance between two points in these points.
+
+    | x   |
+    |-----|
+    | -1  |
+    | 0   |
+    | 2   |
+
+    The shortest distance is '1' obviously, which is from point '-1' to '0'. So the output is as below:
+
+    | shortest|
+    |---------|
+    |  1      |
+
+    ```SQL
+    SELECT MIN(ABS(p1.x - p2.x)) AS shortest
+    FROM point p1
+    CROSS JOIN point p2
+    WHERE p1.x <> p2.x;
+    ```
