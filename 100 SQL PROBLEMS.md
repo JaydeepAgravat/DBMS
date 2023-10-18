@@ -1239,3 +1239,87 @@ Write a SQL solution to output big countries' name, population and area.
     CROSS JOIN point p2
     WHERE p1.x <> p2.x;
     ```
+
+31. Suppose that a website contains two tables, the Customers table and the Orders table. Write a SQL query to find all customers who never order anything.
+
+    Table: Customers.
+
+    | Id | NameCust |
+    |----|----------|
+    | 1  | Joe      |
+    | 2  | Henry    |
+    | 3  | Sam      |
+    | 4  | Max      |
+
+    Table: Orders.
+
+    | Id | CustomerId |
+    |----|------------|
+    | 1  | 3          |
+    | 2  | 1          |
+
+    Using the above tables as example, return the following:
+
+    | Customers |
+    |-----------|
+    | Henry     |
+    | Max       |
+
+    ```SQL
+    SELECT namecust AS "Customers" FROM Customers
+    LEFT JOIN Orders
+    ON Customers.Id = Orders.CustomerId
+    WHERE Orders.CustomerId IS NULL
+    ```
+
+32. Write a SQL query to delete all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.
+
+    | Id | Email            |
+    |----|------------------|
+    | 1  | johnexample.com |
+    | 2  | bobexample.com  |
+    | 3  | johnexample.com |
+
+    Id is the primary key column for this table.
+    For example, after running your query, the above Person table should have the following rows:
+
+    | Id | Email            |
+    |----|------------------|
+    | 1  | johnexample.com |
+    | 2  | bobexample.com  |
+
+    Your output is the whole Person table after executing your sql. Use delete statement.
+
+    ```SQL
+    DELETE FROM Person
+    WHERE id NOT IN(
+        SELECT
+        MIN(id) OVER(PARTITION BY email)
+        FROM person
+    );
+
+    SELECT * FROM Person;
+    ```
+
+33. Employees Earning More Than Their Managers
+ The Employee table holds all employees including their managers. Every employee has an Id, and there is also a column for the manager Id.
+
+    | Id | Name  | Salary | ManagerId |
+    |----|-------|--------|-----------|
+    | 1  | Joe   | 70000  | 3         |
+    | 2  | Henry | 80000  | 4         |
+    | 3  | Sam   | 60000  | NULL      |
+    | 4  | Max   | 90000  | NULL      |
+
+    Given the Employee table, write a SQL query that finds out employees who earn more than their managers. For the above table, Joe is the only employee who earns more than his manager.
+
+    | Employee |
+    |----------|
+    | Joe      |
+
+    ```SQL
+    SELECT E.Name AS Employee FROM Employee E
+    JOIN Employee M
+    ON E.Id=M.ManagerID
+    WHERE E.Salary > M.Salary
+    ```
