@@ -1323,3 +1323,119 @@ Write a SQL solution to output big countries' name, population and area.
     ON E.Id=M.ManagerID
     WHERE E.Salary > M.Salary
     ```
+
+34. Write an SQL query to find each query_name, the quality.
+
+    Table: Queries
+
+    | Column Name | Type    |
+    |-------------|---------|
+    | query_name  | varchar |
+    | result      | varchar |
+    | position    | int     |
+    | rating      | int     |
+
+    There is no primary key for this table, it may have duplicate rows.
+    This table contains information collected from some queries on a database.
+    The position column has a value from 1 to 500.
+    The rating column has a value from 1 to 5. Query with rating less than 3 is a poor query.
+
+    We define query quality as:
+
+    The average of the ratio between query rating and its position.
+
+    Quality should be rounded to 2 decimal places.
+
+    The query result format is in the following example:
+
+    Queries table:
+
+    | query_name | result           | position | rating |
+    |------------|------------------|----------|--------|
+    | Dog        | Golden Retriever | 1        | 5      |
+    | Dog        | German Shepherd  | 2        | 5      |
+    | Dog        | Mule             | 200      | 1      |
+    | Cat        | Shirazi          | 5        | 2      |
+    | Cat        | Siamese          | 3        | 3      |
+    | Cat        | Sphynx           | 7        | 4      |
+
+    Result table:
+
+    | query_name | quality |
+    |------------|---------|
+    | Dog        | 2.50    |
+    | Cat        | 0.66    |
+
+    Dog queries quality is ((5 / 1) + (5 / 2) + (1 / 200)) / 3 = 2.50
+
+    Cat queries quality equals ((2 / 5) + (3 / 3) + (4 / 7)) / 3 = 0.66
+
+    ```SQL
+    SELECT query_name,
+    ROUND(AVG((rating * 1.0) / position), 2) AS quality
+    FROM Queries
+    GROUP BY query_name;
+    ```
+
+35. Write an SQL query to find the total score for each gender at each day. Order the result table by gender and dayTable: Scores
+
+    | Column Name  | Type    |
+    |-------------- |---------|
+    | player_name  | varchar |
+    | gender       | varchar |
+    | day          | date    |
+    | score_points | int     |
+
+    (gender, day) is the primary key for this table.
+    A competition is held between females team and males team.
+    Each row of this table indicates that a player_name and with gender has scored score_point in someday.
+    Gender is 'F' if the player is in females team and 'M' if the player is in males team.
+
+    The query result format is in the following example:
+
+    Scores table:
+
+    | player_name | gender | day        | score_points |
+    |------------ |--------|------------|--------------|
+    | Aron        | F      | 2020-01-01 | 17           |
+    | Alice       | F      | 2020-01-07 | 23           |
+    | Bajrang     | M      | 2020-01-07 | 7            |
+    | Khali       | M      | 2019-12-25 | 11           |
+    | Slaman      | M      | 2019-12-30 | 13           |
+    | Joe         | M      | 2019-12-31 | 3            |
+    | Jose        | M      | 2019-12-18 | 2            |
+    | Priya       | F      | 2019-12-31 | 23           |
+    | Priyanka    | F      | 2019-12-30 | 17           |
+
+    Result table:
+
+    | gender | day        | total |
+    |-------- |------------|-------|
+    | F      | 2019-12-30 | 17    |
+    | F      | 2019-12-31 | 40    |
+    | F      | 2020-01-01 | 57    |
+    | F      | 2020-01-07 | 80    |
+    | M      | 2019-12-18 | 2     |
+    | M      | 2019-12-25 | 13    |
+    | M      | 2019-12-30 | 26    |
+    | M      | 2019-12-31 | 29    |
+    | M      | 2020-01-07 | 36    |
+
+    For females team:
+    First day is 2019-12-30, Priyanka scored 17 points and the total score for the team is 17.
+    Second day is 2019-12-31, Priya scored 23 points and the total score for the team is 40.
+    Third day is 2020-01-01, Aron scored 17 points and the total score for the team is 57.
+    Fourth day is 2020-01-07, Alice scored 23 points and the total score for the team is 80.
+    For males team:
+    First day is 2019-12-18, Jose scored 2 points and the total score for the team is 2.
+    Second day is 2019-12-25, Khali scored 11 points and the total score for the team is 13.
+    Third day is 2019-12-30, Slaman scored 13 points and the total score for the team is 26.
+    Fourth day is 2019-12-31, Joe scored 3 points and the total score for the team is 29.
+    Fifth day is 2020-01-07, Bajrang scored 7 points and the total score for the team is 36.
+
+    ```SQL
+    SELECT gender, day, 
+    SUM(score_points) OVER(PARTITION BY gender ORDER BY day) as total
+    FROM Scores
+    ORDER BY gender, day;
+    ```
