@@ -94,7 +94,7 @@ must not happen at all
 6. Surrogate Key
 
 7. Foreign Key
-    - A foreign key is a primary key from one table that is used to establish a relationship with another table.
+    - A foreign key is a set of attributes in a table that refers to the primary key of another table. The foreign key links these two tables.
 
 ### Cardinality of Relationships
 
@@ -120,7 +120,7 @@ Examples:
 6. Data Migration: Moving data from one database to another or upgrading to a new database can be a complex and time-consuming process.
 7. Flexibility: The structure of a database is often rigid and inflexible, making it difficult to adapt to changing requirements or to accommodate new types of data.
 
-### Data integrity
+## Data integrity
 
 - Data integrity in databases refers to the accuracy, completeness, and consistency
 of the data stored in a database.
@@ -145,7 +145,7 @@ from errors, corruption, or unauthorized changes.
 3. Normalization
     - A design technique that minimizes data redundancy and ensures data consistency by organizing data into separate tables.
 
-### Constraints in MySQL
+## Constraints in MySQL
 
 - Constraints in databases are rules or conditions that must be met for data to be
 inserted, updated, or deleted in a database table.
@@ -177,7 +177,7 @@ retrieve, and delete data in a database.
 many applications, websites, and businesses. In simple terms, SQL is used to
 communicate with and control databases.
 
-### Types of SQL commands
+## Types of SQL commands
 
 1. DDL | Data Definition Language
     1. CREATE
@@ -206,7 +206,7 @@ communicate with and control databases.
 1. CREATE
 2. DROP
 
-```mysql
+```sql
 -- 1. CREATE DATABASE
 CREATE DATABASE IF NOT EXISTS db;
 
@@ -222,22 +222,32 @@ DROP DATABASE IF EXISTS db;
 4. ALTER
 5. RENAME
 
-```mysql
+```sql
 -- 1. CREATE TABLE
-CREATE TABLE employees (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
-  email VARCHAR(50) UNIQUE,
-  hire_date DATE DEFAULT '2022-01-01',
-  salary DECIMAL(10,2) CHECK (salary >= 0),
-  department_id INT,
-  CONSTRAINT name_email_unique UNIQUE (name, email),
-  FOREIGN KEY (department_id) REFERENCES department(id),
-  ON DELETE SET NULL
-  ON UPDATE CASCADE
-);
+CREATE TABLE department(
+    department_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL
+)
 
-INSERT INTO employees (id, name, email, hire_date, salary, department_id)
+CREATE TABLE employee(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE,
+    hire_date DATE DEFAULT '2002-11-12',
+    salary DECIMAL(10,2) CHECK (salary >= 0),
+    department_id INT,
+    
+    CONSTRAINT name_salary_unique UNIQUE(name, salary),
+    FOREIGN KEY (department_id) REFERENCES department (department_id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+)
+
+INSERT INTO department (department_id, name) VALUES
+(1, 'it'),
+(2, 'hr');
+
+INSERT INTO employee (id, name, email, hire_date, salary, department_id)
 VALUES 
   (1, 'John Doe', 'jdoe@example.com', '2022-01-01', 50000, 1),
   (2, 'Jane Smith', 'jsmith@example.com', '2022-02-15', 60000, 2),
@@ -246,11 +256,13 @@ VALUES
   (5, 'Mike Davis', 'mdavis@example.com', '2022-05-15', 70000, 1);
 
 -- 2. TRUNCATE TABLE
-TRUNCATE TABLE employees
+TRUNCATE TABLE employee
 
 -- 3. DROP TABLE
-DROP TABLE employees
+DROP TABLE employee
 ```
+
+### ALTER TABLE command
 
 - The "ALTER TABLE" statement in SQL is used to modify the structure of an existing table.
 - Some of the things that can be done using the ALTER TABLE statement include
@@ -261,7 +273,7 @@ DROP TABLE employees
 4. Add Constraints
 5. Delete Constraints
 
-```mysql
+```sql
 -- 4. ALTER TABLE 
 
 -- Add two new column to an existing table:
@@ -306,7 +318,410 @@ ALTER TABLE table_name
 DROP FOREIGN KEY foreign_key_name;
 ```
 
-```mysql
+```sql
 -- 5. RENAME TABLE
 RENAME TABLE old_name To new_name;
+```
+
+## DML
+
+- The main three DML (Data Manipulation Language) commands in MySQL are:
+
+1. INSERT
+2. UPDATE
+3. DELETE
+
+### 1. INSERT
+
+```sql
+CREATE TABLE department(
+    department_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE employee(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE,
+    hire_date DATE DEFAULT '2002-11-12',
+    salary DECIMAL(10,2) CHECK (salary >= 0),
+    department_id INT,
+    
+    CONSTRAINT name_salary_unique UNIQUE(name, salary),
+    FOREIGN KEY (department_id) REFERENCES department (department_id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
+)
+
+INSERT INTO department (department_id, name) VALUES
+(1, 'it'),
+(2, 'hr');
+
+INSERT INTO employee (id, name, email, hire_date, salary, department_id)
+VALUES 
+  (1, 'John Doe', 'jdoe@example.com', '2022-01-01', 50000, 1),
+  (2, 'Jane Smith', 'jsmith@example.com', '2022-02-15', 60000, 2),
+  (3, 'Bob Johnson', 'bjohnson@example.com', '2022-03-01', 55000, 1),
+  (4, 'Sarah Williams', 'swilliams@example.com', '2022-04-01', 65000, 2),
+  (5, 'Mike Davis', 'mdavis@example.com', '2022-05-15', 70000, 1);
+```
+
+### 2. UPDATE
+
+```SQL
+UPDATE TB
+SET c1 = 'JAVA', c2 = 'second'
+WHERE c1 = 'C' AND c1 = 'C++;
+```
+
+### 3. DELETE
+
+```SQL
+DELETE FROM TB
+WHERE c1 = 'C' AND c1 = 'C++;
+```
+
+## MYSQL FUNCTION
+
+### BUILT-IN FUNCTION
+
+```SQL
+SELECT ABS(c1) FROM TB;
+SELECT COUNT(c1) FROM TB;
+```
+
+#### Scalar function
+
+- ABS()
+- ROUND()
+- CEIL()
+- FLOOR()
+
+#### Aggregate function
+
+- MAX()
+- MIN()
+- SUM()
+- AVG()
+- COUNT()
+- STD()
+- VARIANCE()
+
+## DQL
+
+### SELECT
+
+```sql
+    SELECT * FROM TB LIMIT 10;
+
+    SELECT c1,c2 FROM TB;
+
+    SELECT DISTINCT(c1) FROM TB;
+
+    SELECT DISTINCT c1,c2 FROM TB;
+
+    SELECT c1 FROM TB
+    WHERE c2 IN ('APPLE','NOKIA');
+
+    SELECT c1 FROM TB
+    WHERE c2 NOT IN ('APPLE','NOKIA');
+
+    SELECT c1 FROM TB
+    WHERE c2 BETWEEN 10 AND 20;
+
+    SELECT c1,SQRT(c2),rating/10 AS star FROM TB;
+
+    SELECT c1, 'value' As new_tmp_col FROM TB;
+```
+
+### ORDER BY
+
+```sql
+    SELECT model,screen_size FROM db.phones
+    WHERE brand_name = 'samsung'
+    ORDER BY screen_size DESC
+    LIMIT 3 ;
+
+    SELECT model, num_front_cameras + num_rear_cameras as 'Total' FROM db.phones
+    ORDER BY Total DESC
+    LIMIT 3;
+
+    SELECT model, battery_capacity FROM db.phones
+    ORDER BY battery_capacity DESC
+    LIMIT 1,1;
+
+    SELECT model,rating FROM db.phones
+    WHERE brand_name = 'apple'
+    ORDER BY rating ASC
+    LIMIT 3;
+
+    SELECT brand_name, price FROM db.phones
+    ORDER BY brand_name ASC, price DESC; 
+```
+
+### GROUP BY
+
+```sql
+    SELECT brand_name, COUNT(*) AS 'no_phones',
+    ROUND(AVG(price)) AS 'avg price',
+    MAX(rating) AS 'max rating',
+    ROUND(AVG(screen_size), 2) AS 'screen size',
+    ROUND(AVG(battery_capacity)) AS 'avg battery capacity'
+    FROM db.phones
+    GROUP BY brand_name
+    ORDER BY no_phones DESC;
+
+    SELECT has_5g,
+    ROUND(AVG(price)) AS 'avg price',
+    ROUND(AVG(rating)) AS 'avg rating'
+    FROM db.phones
+    GROUP BY has_5g
+
+    SELECT brand_name,
+    processor_brand,
+    COUNT(*) AS 'no_phones',
+    ROUND(AVG(primary_camera_rear)) AS 'res'
+    FROM db.phones
+    WHERE brand_name = 'samsung'
+    GROUP BY brand_name, processor_brand
+
+    SELECT brand_name, 
+    ROUND(AVG(price)) AS 'avg_price'
+    FROM db.phones
+    GROUP BY brand_name
+    ORDER BY avg_price DESC LIMIT 3
+
+    SELECT brand_name, COUNT(*) AS 'no_phones'
+    FROM db.phones
+    WHERE has_nfc = 'True' AND has_ir_blaster = 'True'
+    GROUP BY brand_name
+    ORDER BY no_phones DESC LIMIT 3
+
+    SELECT has_5g,
+    ROUND(AVG(price)) AS 'avg_price'
+    FROM db.phones
+    WHERE brand_name = 'samsung'
+    GROUP BY has_5g;
+```
+
+### HAVING
+
+```sql
+    SELECT brand_name, 
+    COUNT(*) AS 'count', 
+    ROUND(AVG(rating)) AS 'avg_rating'
+    FROM db.phones
+    GROUP BY brand_name
+    HAVING count > 80
+    ORDER BY avg_rating DESC
+
+    SELECT brand_name, 
+    round((ram_capacity)) AS 'avg_ram'
+    FROM db.phones
+    WHERE refresh_rate > 90 AND fast_charging_available = 1
+    GROUP BY brand_name
+    HAVING COUNT(*) > 10
+    ORDER BY avg_ram DESC LIMIT 3;
+
+    SELECT brand_name,
+    COUNT(*) AS 'num_phones',
+    AVG(price) AS 'avg_price',
+    AVG(rating) AS 'avg_rating'
+    FROM db.phones
+    WHERE has_5g = 'True'
+    GROUP BY brand_name
+    having avg_rating > 70 AND num_phones > 10
+    ORDER BY avg_price DESC;
+```
+
+## JOIN
+
+### 1. CROSS JOIN
+
+```sql
+SELECT * FROM T1
+CROSS JOIN T2;
+```
+
+### 2. INNER JOIN
+
+```sql
+SELECT * FROM T1
+INNER JOIN T2
+ON T1.id = T2.id;
+```
+
+### 3. LEFT JOIN
+
+```sql
+SELECT * FROM T1
+LEFT JOIN T2
+ON T1.id = T2.id;
+```
+
+### 4. RIGHT JOIN
+
+```sql
+SELECT * FROM T1
+RIGHT JOIN T2
+ON T1.id = T2.id;
+```
+
+### 5. FULL OUTER JOIN
+
+```sql
+SELECT * FROM T1
+LEFT JOIN T2
+ON T1.id = T2.id
+
+UNION
+
+SELECT * FROM T1
+RIGHT JOIN T2
+ON T1.id = T2.id;
+```
+
+### 6. SELF JOIN
+
+```sql
+SELECT * FROM T1
+INNER JOIN SELECT * FROM T1
+ON T1.ID = T1.EID;
+```
+
+### SQL SET OPRERATIONS
+
+```sql
+SELECT * FROM T1
+UNION
+SELECT * FROM T2;
+```
+
+1. UNION
+2. UNION ALL
+3. INTERSECT
+4. EXCEPT
+
+### Joining on more than one column
+
+```sql
+SELECT * FROM T1
+INNER JOIN T2
+ON T1.id = T2.id AND T1.eyr = T2.cyr;
+```
+
+### Joining more than 2 tables
+
+```sql
+SELECT * FROM T1
+INNER JOIN T2
+ON T1.id = T2.id
+INNER JOIN T3
+ON T2.uid = T3.uid;
+```
+
+## SUBQUERY
+
+### Types of SUBQUERY
+
+1. Based on Result
+    1. Scalar
+    2. Row
+    3. Table
+2. Based on Working
+    1. Independent
+    2. Correlated
+
+### Where Subquery Place
+
+1. INSERT
+2. UPDATE
+3. DELETE
+4. SELECT
+    1. WHERE
+    2. SELECT
+    3. FROM
+    4. HAVING
+
+### SCALAR SUBQUERY
+
+```sql
+SELECT * FROM T1
+WHERE C1 = (SELECT MAX(C1) FROM T1);
+```
+
+### ROW SUBQUERY
+
+```sql
+SELECT * FROM T1
+WHERE C1 IN (SELECT C1 FROM T1
+                WHERE C2 > AVG(C2));
+```
+
+### TABLE SUBQUERY
+
+```sql
+SELECT * FROM T1
+WHERE (C1,C2) IN (SELECT C1,MAX(C2) 
+                    FROM T1
+                    GROUP BY C1);
+```
+
+### USAGE WITH WHERE
+
+```sql
+SELECT * FROM T1 M1
+WHERE C1 > (SELECT AVG(C1) FROM T1 M2 WHERE M1.C2 = M1.C2)
+```
+
+### USAGE WITH SELECT
+
+```sql
+SELECT C1,C2,C3, 
+(SELECT AVG(C3) FROM T1 M2 WHERE M2.C2 = M1.C2)
+FROM T1 M1
+```
+
+### USAGE WITH FROM
+
+```sql
+SELECT C2, AVG(C3) FROM 
+(SELECT C1, AVG(C3) FROM T3) T1 
+JOIN T2
+ON T1.C1=T2.C1
+```
+
+### USAGE WITH HAVING
+
+```sql
+SELECT * FROM T1
+GROUP BY C1
+HAVING AVG(C2) > (SELECT AVG(C2) FROM T1)
+```
+
+### USAGE WITH INSERT
+
+```sql
+INSERT INTO NT
+(C1, C2)
+SELECT C1, C2 FROM T1 WHERE C2 > (SELECT AVG(C2) FROM T1)
+```
+
+### USAGE WITH UPDATE
+
+```sql
+UPDATE NT
+SET C3 = (
+    SELECT SUM(C2) FROM T1
+    WHERE T1.C1 = NT.C1
+)
+```
+
+### USAGE WITH DELETE
+
+```sql
+DELETE FROM T1
+WHERE C1 IN (
+    {query|sq|ssq}
+)
 ```
